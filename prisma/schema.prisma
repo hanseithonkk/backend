@@ -10,23 +10,26 @@ datasource db {
 model User {
   id               Int               @id @default(autoincrement())
   nickname         String            @unique
-  phone            String            @unique
+  // phone            String            @unique
   mbti             String
   picture          Bytes?
   meetingJoins     MeetingJoin[]
   meetingLikes     MeetingLike[]
   meetingLocations MeetingLocation[]
+  meetings         Meeting[]
 }
 
 model Meeting {
   id             Int               @id @default(autoincrement())
+  userId         Int
+  user           User              @relation(fields: [userId], references: [id])
   title          String
   content        String
   important      String
   locationString String
   location       String
   maxUser        Int
-  mettingDate    DateTime
+  meetingDate    DateTime
   users          MeetingJoin[]
   likes          MeetingLike[]
   locations      MeetingLocation[]
@@ -38,7 +41,7 @@ model MeetingJoin {
   user      User     @relation(fields: [userId], references: [id])
   meetingId Int?
   meeting   Meeting? @relation(fields: [meetingId], references: [id])
-  comment   String
+  comment   String?
 }
 
 model MeetingLike {
