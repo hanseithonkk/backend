@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int               @id @default(autoincrement())
+  nickname         String            @unique
+  phone            String            @unique
+  mbti             String
+  picture          Bytes?
+  meetingJoins     MeetingJoin[]
+  meetingLikes     MeetingLike[]
+  meetingLocations MeetingLocation[]
+}
+
+model Meeting {
+  id             Int               @id @default(autoincrement())
+  title          String
+  content        String
+  important      String
+  locationString String
+  location       String
+  maxUser        Int
+  mettingDate    DateTime
+  users          MeetingJoin[]
+  likes          MeetingLike[]
+  locations      MeetingLocation[]
+}
+
+model MeetingJoin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  meetingId Int?
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  comment   String
+}
+
+model MeetingLike {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  meetingId Int?
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+}
+
+model MeetingLocation {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  meetingId Int?
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  location  String
+}
