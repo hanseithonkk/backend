@@ -147,11 +147,21 @@ export class GroupService {
     async getLocations(
         meetingId: number,
     ) {
-        return await this.prisma.meetingLocation.findMany({
-            where: {
-                meetingId: meetingId
-            }
-        })
+        return {
+            l: await this.prisma.meeting.findFirstOrThrow({
+                where: {
+                    id: meetingId
+                },
+            }),
+            ul: await this.prisma.meetingLocation.findMany({
+                where: {
+                    meetingId: meetingId
+                },
+                include: {
+                    user: true
+                }
+            })
+        }
     }
 
     async myMeeting(
