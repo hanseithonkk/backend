@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { CreateGroupDto, InvolveDto, LocationDto } from './dto/group.dto';
 import { GroupService } from './group.service';
 
@@ -19,6 +19,13 @@ export class GroupController {
     @Get()
     async getAll() { return await this.groupService.all() }
 
+    @Get('my')
+    async myGroup(
+        @Query('nickname')
+        nickname: string,
+    ) { return await this.groupService.myMeeting(nickname) }
+
+
     @Post(':groupId/involves')
     async involve(
         @Param('groupId', new ParseIntPipe())
@@ -28,6 +35,14 @@ export class GroupController {
         @Body()
         data: InvolveDto
     ) { return await this.groupService.involve(nickname, groupId, data) }
+
+    @Delete(':groupId/involves')
+    async removeInvolve(
+        @Param('groupId', new ParseIntPipe())
+        groupId: number,
+        @Query('nickname')
+        nickname: string,
+    ) { return await this.groupService.calcelInvolve(nickname, groupId) }
 
     @Patch(':groupId/locations')
     async location(

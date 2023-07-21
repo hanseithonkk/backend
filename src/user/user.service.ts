@@ -14,7 +14,7 @@ export class UserService {
             update: {},
             create: {
                 nickname: data.nickname,
-                mbti: data.mbti,
+                mbti: "",
                 picture: null,
             },
         })

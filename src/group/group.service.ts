@@ -53,12 +53,30 @@ export class GroupService {
     async all() {
         return await this.prisma.meeting.findMany({
             include: {
-                users: true,
-                likes: true
+                users: {
+                    include: {
+                        user: true
+                    }
+                },
+                likes: true,
+                user: true
             },
             orderBy: {
                 id: 'desc'
             }
+        })
+    }
+
+    async calcelInvolve(
+        nickname: string,
+        groupId: number
+    ) {
+        const { id } = await this.prisma.user.findUniqueOrThrow({
+            where: { nickname: nickname }
+        })
+
+        await this.prisma.meetingJoin.deleteMany({
+            where: { userId: id, meetingId: groupId }
         })
     }
 
@@ -134,5 +152,39 @@ export class GroupService {
                 meetingId: meetingId
             }
         })
+    }
+
+    async myMeeting(
+        nickname: string,
+    ) {
+        const { id } = await this.prisma.user.findUniqueOrThrow({
+            where: { nickname: nickname }
+        })
+
+        const now = Date.now()
+
+        const asdfg = await this.prisma.meeting.findMany({
+            where: {
+                users: {
+                    some: { userId: id }
+                }
+            },
+            include: {
+                users: {
+                    include: {
+                        user: true
+                    }
+                },
+                likes: true,
+                user: true
+            },
+        })
+
+        asdfg.sort((a, b) =>
+            Math.abs(now - a.meetingDate.getTime()) -
+            Math.abs(now - b.meetingDate.getTime())
+        )
+
+        return asdfg
     }
 }
